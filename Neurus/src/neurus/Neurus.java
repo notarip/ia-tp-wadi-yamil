@@ -12,17 +12,19 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import javax.imageio.ImageIO;
-import org.neuroph.contrib.imgrec.ColorMode;
 import org.neuroph.contrib.imgrec.FractionRgbData;
-import org.neuroph.contrib.imgrec.ImageRecognitionHelper;
 import org.neuroph.contrib.imgrec.ImageRecognitionSample;
 import org.neuroph.contrib.imgrec.ImageSampler;
 import org.neuroph.core.NeuralNetwork;
 import org.neuroph.core.learning.SupervisedTrainingElement;
 import org.neuroph.core.learning.TrainingElement;
 import org.neuroph.core.learning.TrainingSet;
+import org.neuroph.nnet.Hopfield;
 import org.neuroph.nnet.MultiLayerPerceptron;
+import org.neuroph.nnet.Perceptron;
 import org.neuroph.nnet.learning.LMS;
+import org.neuroph.nnet.learning.MomentumBackpropagation;
+import org.neuroph.util.TransferFunctionType;
 
 /**
  *
@@ -33,44 +35,64 @@ public class Neurus {
     /**
      * @param args the command line arguments
      */
-    public static void main(String[] args) throws IOException {
-        System.out.println("Time stamp N1:" + new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss:MM").format(new Date()));
+    public static void main(String[] args) throws IOException, Exception {
+        
 
-        int maxIterations = 10000;
-        NeuralNetwork neuralNet = new MultiLayerPerceptron(4, 9, 1);
-        ((LMS) neuralNet.getLearningRule()).setMaxError(0.001);//0-1
-        ((LMS) neuralNet.getLearningRule()).setLearningRate(0.7);//0-1
+        int maxIterations = 800;
+        NeuralNetwork neuralNet = new MultiLayerPerceptron(TransferFunctionType.TANH, 2,4,1);
+        ((LMS) neuralNet.getLearningRule()).setMaxError(0.01);//0-1
+        ((LMS) neuralNet.getLearningRule()).setLearningRate(0.01);//0-1
         ((LMS) neuralNet.getLearningRule()).setMaxIterations(maxIterations);//0-1
-        TrainingSet trainingSet = new TrainingSet();
+        
+        
+         // enable batch if using MomentumBackpropagation
+        if( neuralNet.getLearningRule() instanceof MomentumBackpropagation )
+            ((MomentumBackpropagation)neuralNet.getLearningRule()).setBatchMode(true);
+        
+        TrainingSet trainingSet = new TrainingSet(2,1);
 
-        String imagePath = args[0];
-        for (int i = 0; i < args.length; i++) {
+        String imagePath = "D:\\Dropbox\\facu\\75.23 Inteligencia Artificial\\Tp Red Neuronal";
+        for (int i = 1; i <=3 ; i++) {
             BufferedImage bi = ImageIO.read(new File(imagePath + "\\" + i + ".png"));
-            trainingSet.addElement(new SupervisedTrainingElement(fractionRgbData(bi), new double[i]));
+            //trainingSet.addElement(new SupervisedTrainingElement(fractionRgbData(bi), new double[]{i/10}));
+            trainingSet.addElement(new SupervisedTrainingElement(new double[]{i/10,i/10}, new double[]{i/10}));
+            //trainingSet.addElement(new SupervisedTrainingElement(new double[]{i}, new double[]{i}));
+            
         }
-
+        
         neuralNet.learnInSameThread(trainingSet);
-        System.out.println("Time stamp N2:" + new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss:MM").format(new Date()));
-
+        
+      
         TrainingSet testSet = new TrainingSet();
-      //  testSet.addElement(new TrainingElement(new double[]{4223.0D / daxmax, 4259.0D / daxmax, 4203.0D / daxmax, 3989.0D / daxmax}));
+        BufferedImage bi = ImageIO.read(new File(imagePath + "\\test.png"));
+        a=1;
+        //testSet.addElement(new TrainingElement(fractionRgbData(bi)));
+        testSet.addElement(new TrainingElement(new double[]{3/10,3/10}));
 
         for (TrainingElement testElement : testSet.trainingElements()) {
             neuralNet.setInput(testElement.getInput());
             neuralNet.calculate();
             double[] networkOutput = neuralNet.getOutput();
-            System.out.print("Input: " + Arrays.toString(testElement.getInput()));
             System.out.println(" Output: " + Arrays.toString(networkOutput));
         }
 
+       
     }
 
-    public static double[] fractionRgbData(BufferedImage image) {
-        FractionRgbData imgRgb = new FractionRgbData(ImageSampler.downSampleImage(new Dimension(75, 75), image));
+    static int a=0;
+    public static double[] fractionRgbData(BufferedImage image) throws Exception {
+        FractionRgbData imgRgb = new FractionRgbData(ImageSampler.downSampleImage(new Dimension(15, 15), image));
         double input[];
-
+        
         
             input = FractionRgbData.convertRgbInputToBinaryBlackAndWhite(imgRgb.getFlattenedRgbValues());
+           
+            System.out.println( Arrays.toString(input));
+            for (int i = 0; i < input.length; i++) {
+            input[i]=a;
+         
+            }
+            a++;
         return input;
     }
 }
