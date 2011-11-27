@@ -105,17 +105,26 @@ public class ExtractorCaracteres extends CharacterExtractor {
             g.drawImage(characterImage, x_offset, y_offset, null);
             g.dispose();
 
-            this.listaCaracteres.add(normalizedImage);
+            this.listaCaracteres.add(convertirAByN(normalizedImage));
 
             if (outputDir != null) {
                 //Save new image to file
                 File outputfile = new File(outputDir + File.separator + "caracter_" + num + ".png");
-                ImageIO.write(normalizedImage, "png", outputfile);
+                ImageIO.write(convertirAByN(normalizedImage), "png", outputfile);
             }
             num++;
 
         } catch (Exception ex) {
             Logger.getLogger(CharacterExtractor.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    public BufferedImage convertirAByN(BufferedImage imagen) throws IOException {
+
+        BufferedImage imagenBN = new BufferedImage(imagen.getWidth(), imagen.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
+        imagenBN.getGraphics().drawImage(imagen, 0, 0, null);
+        return imagenBN;
+
+
     }
 }
