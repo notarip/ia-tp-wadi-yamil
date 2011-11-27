@@ -4,6 +4,8 @@
  */
 package neurus;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.neuroph.core.learning.TrainingSet;
 import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.BackPropagation;
@@ -21,7 +23,6 @@ public class RedOcr extends BackPropagation{
         
         
     }
-    
-    
+  
     
 }
