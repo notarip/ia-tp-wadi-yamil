@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Observable;
 import java.util.Observer;
 import org.neuroph.contrib.imgrec.FractionRgbData;
@@ -31,7 +32,8 @@ public class Neurus implements Observer{
      * @param args the command line arguments
      * 
      */
-    
+    public static int TAMANIO_ENTRADA=225;
+    public static int ANCHO_IMAGEN=15;
     
     public Neurus() throws Exception{
          
@@ -39,9 +41,11 @@ public class Neurus implements Observer{
     
     public void iniciar() throws Exception{
          int maxIterations = 1000;
-        NeuralNetwork neuralNet = new MultiLayerPerceptron(225,450,225,120,12);
-        ((LMS) neuralNet.getLearningRule()).setMaxError(0.08);//0-1
-        ((LMS) neuralNet.getLearningRule()).setLearningRate(0.01);//0-1
+        //NeuralNetwork neuralNet = new MultiLayerPerceptron(TAMANIO_ENTRADA,125,12);
+         NeuralNetwork neuralNet = new MultiLayerPerceptron(TAMANIO_ENTRADA,125,12);
+             //NeuralNetwork neuralNet = new MultiLayerPerceptron(225,350,12);
+        ((LMS) neuralNet.getLearningRule()).setMaxError(0.1);//0-1
+//        ((LMS) neuralNet.getLearningRule()).setLearningRate(0.0009);//0-1
        // ((LMS) neuralNet.getLearningRule()).setMaxIterations(maxIterations);//0-1
         
         
@@ -56,7 +60,7 @@ public class Neurus implements Observer{
         
          String dir = System.getProperty("user.dir").concat("/src/neurus/");
         agregarEntrenamiento(dir+"fuente1.png", neuralNet);
-        //agregarEntrenamiento(dir+"fuente2.png", neuralNet);
+        agregarEntrenamiento(dir+"fuente2.png", neuralNet);
 //        agregarEntrenamiento(dir+"fuente3.png", neuralNet);
         
         
@@ -64,7 +68,7 @@ public class Neurus implements Observer{
         TrainingSet testSet = new TrainingSet();
         
         ExtractorCaracteres ec=new ExtractorCaracteres();
-        ArrayList<BufferedImage> ab=ec.recortar(new File(dir+"test.png"), new File("D:\\facu\\75.23 IA\\trunk\\Neurus\\src\\neurus\\"),15,15);
+        ArrayList<BufferedImage> ab=ec.recortar(new File(dir+"test.png"), new File("D:\\facu\\75.23 IA\\trunk\\Neurus\\src\\neurus\\"),ANCHO_IMAGEN,ANCHO_IMAGEN);
         testSet.addElement(new TrainingElement(fractionRgbData(ab.get(0))));
         
 //        do {            
@@ -114,8 +118,8 @@ public class Neurus implements Observer{
     
     public static void agregarEntrenamiento(String url,NeuralNetwork net) throws Exception{
         ExtractorCaracteres ec=new ExtractorCaracteres();
-        TrainingSet trainingSet = new TrainingSet(225,12);
-        ArrayList<BufferedImage> imgs=ec.recortar(new File(url), new File("D:\\facu\\75.23 IA\\trunk\\Neurus\\src\\neurus\\"), 15, 15);
+        TrainingSet trainingSet = new TrainingSet(TAMANIO_ENTRADA,12);
+        ArrayList<BufferedImage> imgs=ec.recortar(new File(url), new File("D:\\facu\\75.23 IA\\trunk\\Neurus\\src\\neurus\\"), ANCHO_IMAGEN, ANCHO_IMAGEN);
         
         for (int i = 0; i <imgs.size(); i++) {
             BufferedImage bufferedImage = imgs.get(i);
@@ -139,6 +143,7 @@ public class Neurus implements Observer{
         
         
            input = FractionRgbData.convertRgbInputToBinaryBlackAndWhite(imgRgb.getFlattenedRgbValues());
+           
 //            System.out.println("Tamanio imput"+input.length);
         //input = imgRgb.getFlattenedRgbValues();
           // System.out.println("Tamanio imput"+input.length);
