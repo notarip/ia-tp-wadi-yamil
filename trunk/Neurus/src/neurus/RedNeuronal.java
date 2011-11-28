@@ -93,7 +93,7 @@ public class RedNeuronal implements Observer, Serializable {
      * Se agrega una imagen que contiene los 12 digitos a reconocer. 
      * Si no se pudo dividir correctamente la imagen se devuelve false
      */
-    public boolean agregarImagenEntrenamiento(File fuente) throws Exception {
+    public boolean lanzarEntrenamientoImagen(File fuente) throws Exception {
 
         ExtractorCaracteres ec = new ExtractorCaracteres();
         TrainingSet trainingSet = new TrainingSet(this.tEntrada, this.tSalida);
@@ -113,7 +113,11 @@ public class RedNeuronal implements Observer, Serializable {
 
             trainingSet.addElement(new SupervisedTrainingElement(rgbValues, resultado));
         }
-        this.neuralNet.learnInSameThread(trainingSet);
+//        this.neuralNet.learnInSameThread(trainingSet);
+        this.neuralNet.learnInNewThread(trainingSet);
+        do {
+            Thread.sleep(5 * 1000);
+        } while (!neuralNet.getLearningRule().isStopped());
 //        System.out.println("Entrenado: " + url);
 //        nroFuente++;
 
