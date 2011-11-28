@@ -88,7 +88,7 @@ public class ManejoImagenTest {
         rescaleOp.filter(image, image);  // Source and destination are the same.
         File fi = new File(dir + "salida/imagen filtrada.png");
         ImageIO.write(image, "png", fi);
-/*
+        /*
         try
         {
         //colored image path
@@ -118,5 +118,18 @@ public class ManejoImagenTest {
         {
         System.out.println(e);
         }*/
+    }
+
+    @Test
+    public void convertirAByN() throws IOException {
+
+        BufferedImage image_to_save = ImageIO.read(new File(dir + "entrada/test.png"));
+
+        BufferedImage image_to_save2 = new BufferedImage(image_to_save.getWidth(), image_to_save.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
+        image_to_save2.getGraphics().drawImage(image_to_save, 0, 0, null);
+        image_to_save = image_to_save2;
+
+        File fi = new File(dir + "salida/imagen en b y n.png");
+        ImageIO.write(image_to_save2, "png", fi);
     }
 }
