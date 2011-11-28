@@ -108,7 +108,7 @@ public class Neurus {
                     File archivo = new File(baseDir + File.separator + nombreArchivo);
                     if (archivo.exists()) {
                         System.out.println("Entrenando la red con el archivo " + nombreArchivo);
-                        red.agregarImagenEntrenamiento(archivo);
+                        red.lanzarEntrenamientoImagen(archivo);
                         System.out.println("Finalizo el entrenamiento con el archivo " + nombreArchivo);
                     } else {
                         System.out.println("El archivo " + baseDir + File.separator + nombreArchivo + " no existe.");
@@ -123,7 +123,7 @@ public class Neurus {
 
                 for (int i = 0; i < listaArchivos.length; i++) {
                     System.out.println("Entrenando la red con el archivo " + listaArchivos[i].getName());
-                    red.agregarImagenEntrenamiento(listaArchivos[i]);
+                    red.lanzarEntrenamientoImagen(listaArchivos[i]);
                     System.out.println("Finalizo el entrenamiento con el archivo " + listaArchivos[i].getName());
                 }
             }
