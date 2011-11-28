@@ -58,10 +58,10 @@ public class ExtractorCaracteresTest {
         ArrayList<BufferedImage> listaChar;
         ExtractorCaracteres extractor = new ExtractorCaracteres();
 
-        File imageFile = new File(dir + "entrada/test2.png");
+        File imageFile = new File(dir + "entrada/test.png");
         listaChar = extractor.recortar(imageFile, null, alto, ancho);
       
-        assertEquals(5, listaChar.size());
+        assertEquals(1, listaChar.size());
 
     }
      @Test
@@ -70,10 +70,10 @@ public class ExtractorCaracteresTest {
         ArrayList<BufferedImage> listaChar;
         ExtractorCaracteres extractor = new ExtractorCaracteres();
 
-        File imageFile = new File(dir + "entrada/test2.png");
+        File imageFile = new File(dir + "entrada/test.png");
         listaChar = extractor.recortar(imageFile, salidaDir, alto, ancho);
       
-        assertEquals(5, listaChar.size());
+        assertEquals(1, listaChar.size());
 
     }
 }
