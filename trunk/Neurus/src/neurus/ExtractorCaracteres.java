@@ -123,6 +123,7 @@ public class ExtractorCaracteres extends CharacterExtractor {
 
         BufferedImage imagenBN = new BufferedImage(imagen.getWidth(), imagen.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
         imagenBN.getGraphics().drawImage(imagen, 0, 0, null);
+        
         return imagenBN;
 
 
