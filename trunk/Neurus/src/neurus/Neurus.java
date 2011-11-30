@@ -41,7 +41,7 @@ public class Neurus {
         boolean guardarRed = false;
         String archivoDatosRed = "datosRed.dat";
         boolean cargarRed = false;
-        RedNeuronal red=null;
+        RedNeuronal red = null;
 
         if (args.length == 0) {
             System.out.println("Se deben ingresar parametros.");
@@ -52,11 +52,11 @@ public class Neurus {
                 reconocer = true;
                 if ((i + 1) < args.length) {
                     archivoAReconocer = args[i + 1];
-                }else{
+                } else {
                     System.out.println("Error en el parametro -r. Falta especificar archivo?");
                     return;
                 }
-               
+
             }
             if (args[i].equals("-e")) {
                 entrenar = true;
@@ -70,7 +70,7 @@ public class Neurus {
                 entrenar = true;
                 if ((i + 1) < args.length) {
                     dirEntrenamiento = args[i + 1];
-                }else{
+                } else {
                     System.out.println("Error en el parametro -ed. Falta especificar directorio?");
                     return;
                 }
@@ -88,47 +88,57 @@ public class Neurus {
         if (cargarRed) {
             File datos = new File(baseDir + File.separator + archivoDatosRed);
             if (datos.exists()) {
-                red=RedNeuronal.cargarRed(datos.getPath());
-                
+                red = RedNeuronal.cargarRed(datos.getPath());
+
                 System.out.println("Se cargaron los datos guardados en la red");
             } else {
                 System.out.println("No se pudo cargar la red. No habìa datos guardados.");
             }
-        }else{
+        } else {
             red = new RedNeuronal(TAMANIO_ENTRADA, TAMANIO_CAPA_INT, TAMANIO_SALIDA, ANCHO_IMAGEN);
         }
 
-        
+
 
         if (entrenar) {
 
+            //Se entrena la red con los archivos pasados por linea de comando
             if (archivosEntrenamiento.size() > 0) {
                 for (String nombreArchivo : archivosEntrenamiento) {
                     File archivo = new File(baseDir + File.separator + nombreArchivo);
                     if (archivo.exists()) {
                         System.out.println("Entrenando la red con el archivo " + nombreArchivo);
                         red.lanzarEntrenamientoImagen(archivo);
-                        System.out.println("Finalizo el entrenamiento con el archivo " + nombreArchivo);
+//                        System.out.println("Finalizo el entrenamiento con el archivo " + nombreArchivo);
                     } else {
                         System.out.println("El archivo " + baseDir + File.separator + nombreArchivo + " no existe.");
                         System.out.println("Se corta la ejecucion del programa.");
                         return;
                     }
                 }
+                do {
+                    Thread.sleep(5 * 1000);
+                } while (!red.isEntrenamientoStopped());
             }
+            
+            //Se entrena la red con los archivos indicados en la carpeta
             if (dirEntrenamiento != null) {
                 File dirEnt = new File(baseDir + File.separator + dirEntrenamiento);
-                File[] listaArchivos = dirEnt.listFiles(new ImageFileFilter());
+                String[] ext = {"jpg", "png"};
+                File[] listaArchivos = dirEnt.listFiles(new ImageFileFilter(ext));
 
                 for (int i = 0; i < listaArchivos.length; i++) {
                     System.out.println("Entrenando la red con el archivo " + listaArchivos[i].getName());
                     red.lanzarEntrenamientoImagen(listaArchivos[i]);
-                    System.out.println("Finalizo el entrenamiento con el archivo " + listaArchivos[i].getName());
+
                 }
+                do {
+                    Thread.sleep(5 * 1000);
+                } while (!red.isEntrenamientoStopped());
             }
 
             if (guardarRed) {
-                red.guardar(baseDir+File.separator+archivoDatosRed);
+                red.guardar(baseDir + File.separator + archivoDatosRed);
                 System.out.println("Se guardaron los datos de la red en el archivo " + archivoDatosRed);
             }
         }
@@ -148,6 +158,8 @@ public class Neurus {
                 System.out.println("El archivo no existe.");
             }
         }
+
+        System.out.println("Finalizada la ejecucion del programa");
 
     }
     /**
