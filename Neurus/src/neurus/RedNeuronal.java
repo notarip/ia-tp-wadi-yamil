@@ -115,14 +115,16 @@ public class RedNeuronal implements Observer, Serializable {
         }
 //        this.neuralNet.learnInSameThread(trainingSet);
         this.neuralNet.learnInNewThread(trainingSet);
-        do {
-            Thread.sleep(5 * 1000);
-        } while (!neuralNet.getLearningRule().isStopped());
+      
 //        System.out.println("Entrenado: " + url);
 //        nroFuente++;
-
+        System.out.println("Finalizo el entrenamiento con el archivo " + fuente.getName());
         return true;
 
+    }
+
+    public boolean isEntrenamientoStopped() {
+        return neuralNet.getLearningRule().isStopped();
     }
 
     public String reconocerImagen(File imagen) throws Exception {
