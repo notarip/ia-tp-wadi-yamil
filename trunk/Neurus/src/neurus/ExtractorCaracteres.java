@@ -1,6 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ExtractorCaracteres.java
+ * Trabajo practico OCR de inteligencia artificial (75.23)
+ * Grupo: Wadi Jalil Maluf 84780 - Yamil Jalil Maluf 79040
+ * 2do cuatrimestre 2011
  */
 package neurus;
 
@@ -21,8 +23,8 @@ import net.sourceforge.javaocr.scanner.DocumentScanner;
 import net.sourceforge.javaocr.scanner.PixelImage;
 
 /**
- *
- * @author Atlhon
+ * Clase para fragementar una imagen en los distintos 
+ * caracteres que la componen
  */
 public class ExtractorCaracteres extends CharacterExtractor {
 
@@ -35,15 +37,18 @@ public class ExtractorCaracteres extends CharacterExtractor {
     private int std_height;
 
     public ExtractorCaracteres() {
-
         listaCaracteres = new ArrayList<BufferedImage>();
-
-
     }
-    /*
-     *Si dirSalida es null las imagenes no se guardan en el disco pero si en memoria
-     */
 
+    /**
+     * Metodo para recortar cada caracter de una imagen
+     * @param imagenEntrada: imagen a recortar. Los caracteres no deben superponerse
+     * @param dirSalida: directorio en el que se guarda cada caracter reconocido 
+     * como imagen. Si se especifica null las imagenes no se guardan.  
+     * @param std_ancho: ancho de la imagen de salida
+     * @param std_alto: alto de la imagen de salida
+     * @return lista de imagenes que contiene cada una un caracter
+     */
     public ArrayList<BufferedImage> recortar(File imagenEntrada, File dirSalida, int std_ancho, int std_alto) {
 
         try {
@@ -69,13 +74,13 @@ public class ExtractorCaracteres extends CharacterExtractor {
             int areaW = x2 - x1;
             int areaH = y2 - y1;
 
-            //Extract the character
+            //Extrae los caracteres
             BufferedImage characterImage = ImageIO.read(inputImage);
             characterImage = characterImage.getSubimage(x1, y1, areaW, areaH);
 
-            //Scale image so that both the height and width are less than std size
+            //Escala la imagen para que tengan el ancho y alto especificados
             if (characterImage.getWidth() > std_width) {
-                //Make image always std_width wide
+                //Se lleva siempre al ancho dado
                 double scaleAmount = (double) std_width / (double) characterImage.getWidth();
                 AffineTransform tx = new AffineTransform();
                 tx.scale(scaleAmount, scaleAmount);
@@ -84,7 +89,7 @@ public class ExtractorCaracteres extends CharacterExtractor {
             }
 
             if (characterImage.getHeight() > std_height) {
-                //Make image always std_height tall
+                //Se lleva siempre al alto dado
                 double scaleAmount = (double) std_height / (double) characterImage.getHeight();
                 AffineTransform tx = new AffineTransform();
                 tx.scale(scaleAmount, scaleAmount);
@@ -92,13 +97,13 @@ public class ExtractorCaracteres extends CharacterExtractor {
                 characterImage = op.filter(characterImage, null);
             }
 
-            //Paint the scaled image on a white background
+            //Pinta la imagen escalda en un fondo blanco
             BufferedImage normalizedImage = new BufferedImage(std_width, std_height, BufferedImage.TYPE_INT_RGB);
             Graphics2D g = normalizedImage.createGraphics();
             g.setColor(Color.WHITE);
             g.fillRect(0, 0, std_width, std_height);
 
-            //Center scaled image on new canvas
+            //Center la imagen escalada
             int x_offset = (std_width - characterImage.getWidth()) / 2;
             int y_offset = (std_height - characterImage.getHeight()) / 2;
 
@@ -108,7 +113,7 @@ public class ExtractorCaracteres extends CharacterExtractor {
             this.listaCaracteres.add(convertirAByN(normalizedImage));
 
             if (outputDir != null) {
-                //Save new image to file
+                //Salva la imagen en un archivo
                 File outputfile = new File(outputDir + File.separator + "caracter_" + num + ".png");
                 ImageIO.write(convertirAByN(normalizedImage), "png", outputfile);
             }
@@ -119,11 +124,13 @@ public class ExtractorCaracteres extends CharacterExtractor {
         }
     }
 
+    /**
+     * Convierte la imagen a blanco y negro. 
+     */
     public BufferedImage convertirAByN(BufferedImage imagen) throws IOException {
 
         BufferedImage imagenBN = new BufferedImage(imagen.getWidth(), imagen.getHeight(), BufferedImage.TYPE_BYTE_BINARY);
         imagenBN.getGraphics().drawImage(imagen, 0, 0, null);
-        
         return imagenBN;
 
 
