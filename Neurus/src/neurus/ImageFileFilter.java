@@ -12,8 +12,12 @@ import java.io.*;
  */
 public class ImageFileFilter implements FileFilter {
 
-    private final String[] okFileExtensions =
-            new String[]{"jpg", "png"};
+    private final String[] okFileExtensions;
+//            new String[]{"jpg", "png"};
+    
+    public ImageFileFilter(String[] ext){
+        okFileExtensions=ext;
+    }
 
     @Override
     public boolean accept(File pathname) {
