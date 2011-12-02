@@ -1,3 +1,9 @@
+/**
+ * Neurus.java
+ * Trabajo practico OCR de inteligencia artificial (75.23)
+ * Grupo: Wadi Jalil Maluf 84780 - Yamil Jalil Maluf 79040
+ * 2do cuatrimestre 2011
+ */
 package neurus;
 
 import java.io.File;
@@ -7,30 +13,28 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class Neurus {
-
     
-    public static int TAMANIO_CAPA_INT = 108;
-    public static int TAMANIO_SALIDA = 12;
-    public static double ERROR =0.01 ;
-    public static int ANCHO_IMAGEN = 30; 
-    private static int ALTO_IMAGEN=60;
-
-    public static int TAMANIO_ENTRADA = ANCHO_IMAGEN * ALTO_IMAGEN;
+    public static int TAMANIO_CAPA_INT = 108; //tamaño de la capa intermedia
+    public static int TAMANIO_SALIDA = 12; //tamaño de la capa de salida
+    public static double ERROR =0.01 ; //Error para el entrenamiento de la red
+    public static int ANCHO_IMAGEN = 30; //Ancho de la imagen para alimentar la red
+    private static int ALTO_IMAGEN=60; //Alto de la imagen para alimentar la red
+    public static int TAMANIO_ENTRADA = ANCHO_IMAGEN * ALTO_IMAGEN; //tamaño de entrada de la red
     
     public Neurus() throws Exception {
     }
 
     public static void main(String[] args) throws IOException, Exception {
-        
-        String baseDir = System.getProperty("user.dir");
+                
         boolean reconocer = false;
         boolean entrenar = false;
-        String archivoAReconocer = null;
-        ArrayList<String> archivosEntrenamiento = new ArrayList<String>();
-        String dirEntrenamiento = null;
         boolean guardarRed = false;
-        String archivoDatosRed = "datosRed.dat";
         boolean cargarRed = false;
+        String baseDir = System.getProperty("user.dir");
+        String archivoAReconocer = null;
+        String dirEntrenamiento = null;
+        String archivoDatosRed = "datosRed.dat";
+        ArrayList<String> archivosEntrenamiento = new ArrayList<String>();
         RedNeuronal red = null;
 
         if (args.length == 0) {
@@ -46,7 +50,6 @@ public class Neurus {
                     System.out.println("Error en el parametro -r. Falta especificar archivo?");
                     return;
                 }
-
             }
             if (args[i].equals("-e")) {
                 entrenar = true;
@@ -79,14 +82,13 @@ public class Neurus {
                 red = RedNeuronal.cargarRed(datos.getPath());
                 System.out.println("Se cargaron los datos guardados en la red");
             } else {
-                System.out.println("No se pudo cargar la red. No habìa datos guardados.");
+                System.out.println("No se pudo cargar la red. No existen datos guardados.");
             }
         } else {
             red = new RedNeuronal(TAMANIO_ENTRADA,ERROR, TAMANIO_CAPA_INT, TAMANIO_SALIDA, ANCHO_IMAGEN,ALTO_IMAGEN);
         }
 
         if (entrenar) {
-
             //Se entrena la red con los archivos pasados por linea de comando
             if (archivosEntrenamiento.size() > 0) {
                 for (String nombreArchivo : archivosEntrenamiento) {
@@ -101,25 +103,18 @@ public class Neurus {
                         return;
                     }
                 }
-                do {
-                    Thread.sleep(5 * 1000);
-                } while (!red.isEntrenamientoStopped());
             }
             
-            //Se entrena la red con los archivos indicados en la carpeta
+            //Se entrena la red con los archivos indicados en el directorio
             if (dirEntrenamiento != null) {
                 File dirEnt = new File(baseDir + File.separator + dirEntrenamiento);
-                String[] ext = {"jpg", "png"};
+                String[] ext = {"jpg", "png"}; //filtro para las extensiones de los archivos a cargar 
                 File[] listaArchivos = dirEnt.listFiles(new ImageFileFilter(ext));
 
                 for (int i = 0; i < listaArchivos.length; i++) {
                     System.out.println("Entrenando la red con el archivo " + listaArchivos[i].getName());
                     red.lanzarEntrenamientoImagen(listaArchivos[i]);
-
                 }
-                do {
-                    Thread.sleep(5 * 1000);
-                } while (!red.isEntrenamientoStopped());
             }
 
             if (guardarRed) {
