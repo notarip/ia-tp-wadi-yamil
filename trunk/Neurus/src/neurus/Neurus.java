@@ -17,7 +17,7 @@ import java.util.ArrayList;
 public class Neurus {
 
     public static int TAMANIO_ENTRADA = 2500;
-    public static int TAMANIO_CAPA_INT = 108;
+    public static int TAMANIO_CAPA_INT = 200;//108;
     public static int TAMANIO_SALIDA = 12;
     public static int ANCHO_IMAGEN = 50; //Se supone cuadrada
 //    public static int nroFuente=1;
