@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package neurus;
 
 import java.io.File;
@@ -10,18 +6,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-/**
- *
- * @author ringo
- */
 public class Neurus {
 
     
     public static int TAMANIO_CAPA_INT = 108;
     public static int TAMANIO_SALIDA = 12;
     public static double ERROR =0.01 ;
-    public static int ANCHO_IMAGEN = 30; //Se supone cuadrada
-//    public static int nroFuente=1;
+    public static int ANCHO_IMAGEN = 30; 
     private static int ALTO_IMAGEN=60;
 
     public static int TAMANIO_ENTRADA = ANCHO_IMAGEN * ALTO_IMAGEN;
@@ -29,13 +20,8 @@ public class Neurus {
     public Neurus() throws Exception {
     }
 
-    /**
-     * @param args the command line arguments
-     * 
-     */
     public static void main(String[] args) throws IOException, Exception {
-        //    Neurus n = new Neurus();
-        //      n.iniciar();
+        
         String baseDir = System.getProperty("user.dir");
         boolean reconocer = false;
         boolean entrenar = false;
@@ -78,22 +64,19 @@ public class Neurus {
                     System.out.println("Error en el parametro -ed. Falta especificar directorio?");
                     return;
                 }
-
             }
             if (args[i].equals("-s")) {
                 guardarRed = true;
-//                archivoDatosRed = args[i + 1];
             }
             if (args[i].equals("-c")) {
                 cargarRed = true;
             }
         }
-
+        
         if (cargarRed) {
             File datos = new File(baseDir + File.separator + archivoDatosRed);
             if (datos.exists()) {
                 red = RedNeuronal.cargarRed(datos.getPath());
-
                 System.out.println("Se cargaron los datos guardados en la red");
             } else {
                 System.out.println("No se pudo cargar la red. No habìa datos guardados.");
@@ -101,8 +84,6 @@ public class Neurus {
         } else {
             red = new RedNeuronal(TAMANIO_ENTRADA,ERROR, TAMANIO_CAPA_INT, TAMANIO_SALIDA, ANCHO_IMAGEN,ALTO_IMAGEN);
         }
-
-
 
         if (entrenar) {
 
@@ -113,7 +94,7 @@ public class Neurus {
                     if (archivo.exists()) {
                         System.out.println("Entrenando la red con el archivo " + nombreArchivo);
                         red.lanzarEntrenamientoImagen(archivo);
-//                        System.out.println("Finalizo el entrenamiento con el archivo " + nombreArchivo);
+                        System.out.println("Finalizo el entrenamiento con el archivo " + nombreArchivo);
                     } else {
                         System.out.println("El archivo " + baseDir + File.separator + nombreArchivo + " no existe.");
                         System.out.println("Se corta la ejecucion del programa.");
@@ -162,196 +143,6 @@ public class Neurus {
                 System.out.println("El archivo no existe.");
             }
         }
-
         System.out.println("Finalizada la ejecucion del programa");
-
     }
-    /**
-    public void iniciar() throws Exception {
-    int maxIterations = 1000;
-    ////NeuralNetwork.load("redIntentoAmano")
-    NeuralNetwork neuralNet = new MultiLayerPerceptron(TAMANIO_ENTRADA,108,12);
-    
-    //         NeuralNetwork neuralNet =new SupervisedHebbianNetwork(TAMANIO_ENTRADA,  12);//MatrixMultiLayerPerceptron(new MultiLayerPerceptron(TransferFunctionType.RAMP,TAMANIO_ENTRADA,125,12));
-    
-    //NeuralNetwork neuralNet = new MultiLayerPerceptron(225,350,12);
-    ((LMS) neuralNet.getLearningRule()).setMaxError(0.1);//0-1
-    //        ((LMS) neuralNet.getLearningRule()).setLearningRate(0.00001);//0-1
-    // ((LMS) neuralNet.getLearningRule()).setMaxIterations(maxIterations);//0-1
-    
-    
-    // enable batch if using MomentumBackpropagation
-    
-    
-    neuralNet.getLearningRule().addObserver(this);
-    
-    if( neuralNet.getLearningRule() instanceof MomentumBackpropagation ) 
-    ((MomentumBackpropagation)neuralNet.getLearningRule()).setBatchMode(true);
-    
-    
-    String dir = System.getProperty("user.dir").concat("/src/neurus/");
-    for (int i = 1; i < 69; i++) {
-    String adir=dir+"50/fuente ("+i+").png";
-    agregarEntrenamiento(adir, neuralNet);   
-    }
-    //         agregarEntrenamiento(dir+"50/wadi1.png", neuralNet);
-    //         agregarEntrenamiento(dir+"50/wadi2.png", neuralNet);
-    //         agregarEntrenamiento(dir+"50/wadi3.png", neuralNet);
-    //         agregarEntrenamiento(dir+"50/wadi4.png", neuralNet);
-    //        agregarEntrenamiento(dir+"fuente1.png", neuralNet);
-    //        agregarEntrenamiento(dir+"fuente2.png", neuralNet);
-    //        agregarEntrenamiento(dir+"fuente3.png", neuralNet);
-    //        agregarEntrenamiento(dir+"fuente4.png", neuralNet);
-    //        agregarEntrenamiento(dir+"fuente5.png", neuralNet);
-    //        agregarEntrenamiento(dir+"fuente6.png", neuralNet);
-    //                agregarEntrenamiento(dir+"fuente7.png", neuralNet);
-    //        agregarEntrenamiento(dir+"fuente8.png", neuralNet);
-    //        agregarEntrenamiento(dir+"fuente9.png", neuralNet);
-    //         agregarEntrenamiento(dir+"wadi1.png", neuralNet);
-    //         agregarEntrenamiento(dir+"wadi2.png", neuralNet);
-    //         agregarEntrenamiento(dir+"wadi3.png", neuralNet);
-    //         agregarEntrenamiento(dir+"wadi4.png", neuralNet);
-    //         agregarEntrenamiento(dir+"wadi5.png", neuralNet);
-    
-    
-    //       neuralNet.save("redIntentoAmano");
-    TrainingSet testSet = new TrainingSet();
-    
-    ExtractorCaracteres ec = new ExtractorCaracteres();
-    ArrayList<BufferedImage> ab = ec.recortar(new File(dir + "test.png"), new File("D:\\facu\\75.23 IA\\trunk\\Neurus\\src\\neurus\\"), ANCHO_IMAGEN, ANCHO_IMAGEN);
-    testSet.addElement(new TrainingElement(fractionRgbData(ab.get(0))));
-    
-    //        do {            
-    //            Thread.sleep(5*1000);
-    //        } while (!neuralNet.getLearningRule().isStopped());
-    //        
-    for (TrainingElement testElement : testSet.trainingElements()) {
-    neuralNet.setInput(testElement.getInput());
-    neuralNet.calculate();
-    double[] networkOutput = neuralNet.getOutput();
-    
-    System.out.println(" Output: " + Arrays.toString(networkOutput));
-    System.out.println("Ganador:" + getWinner(networkOutput) + "!!!");
-    
-    //            File arch=new File("");
-    //            
-    //            URL url= arch.toURI().toURL();
-    
-    URL url = new URL("file:" + dir + "alarma.wav");
-    //            URL url = ClassLoader.getSystemResource("/src/neurus/alarma.wav");
-    java.applet.AudioClip clip = JApplet.newAudioClip(url);
-    
-    clip.play();
-    }
-    //        long transcurrido=System.currentTimeMillis()-tiempo;
-    
-    
-    //        System.out.println("Calculado en "+transcurrido/1000+" segundos");
-    
-    //            URL url = ClassLoader.getSystemResource("ar/com/mcg/vista/main/resources/" + soundFileName);
-    //            java.applet.AudioClip clip = JApplet.newAudioClip(url);
-    //            clip.play();
-    //         URL url= new URL("file:"+dir+"alarma.wav");
-    //            java.applet.AudioClip clip = JApplet.newAudioClip(url);
-    //
-    //            clip.play();
-    
-    Thread.sleep(1000);
-    
-    
-    }
-     */
-    /**  
-    public static int getWinner(double[] winers) {
-    
-    double max = 0;
-    int winner = 0;
-    
-    for (int i = 0; i < winers.length; i++) {
-    
-    if (winers[i] > max) {
-    
-    winner = i;
-    max = winers[i];
-    
-    }
-    
-    
-    
-    }
-    
-    return winner;
-    }
-    
-    //    
-    //      public static int getWinner(double[] winers){ 
-    //              
-    //             double max = 0; 
-    //             int winner = 0; 
-    //              
-    //             for (int i = 0; i < winers.length; i++) { 
-    //                
-    //                  if (winers[i] > max){ 
-    //                        
-    //                       winner = i; 
-    //                       max = winers[i]; 
-    //                        
-    //                  } 
-    //                        
-    //                   
-    //                   
-    //          } 
-    //              
-    //             return winner; 
-    //        } 
-    
-    
-    
-    public static void agregarEntrenamiento(String url,NeuralNetwork net) throws Exception{
-    ExtractorCaracteres ec=new ExtractorCaracteres();
-    TrainingSet trainingSet = new TrainingSet(TAMANIO_ENTRADA,12);
-    ArrayList<BufferedImage> imgs=ec.recortar(new File(url), new File("D:\\facu\\75.23 IA\\trunk\\Neurus\\src\\neurus\\"), ANCHO_IMAGEN, ANCHO_IMAGEN);
-    System.out.println("Pedazos encontrados "+imgs.size());
-    if(imgs.size()!=12)
-    return;
-    for (int i = 0; i <imgs.size(); i++) {
-    BufferedImage bufferedImage = imgs.get(i);
-    double[] rgbValues = fractionRgbData(bufferedImage);
-    double[] resultado = new double[12];
-    
-    Arrays.fill(resultado, 0);
-    resultado[i] = 1;
-    
-    trainingSet.addElement(new SupervisedTrainingElement(rgbValues, resultado));
-    }
-    net.learnInSameThread(trainingSet);
-    System.out.println("Entrenado: " + url);
-    nroFuente++;
-    
-    }
-    
-    public static double[] fractionRgbData(BufferedImage image) throws Exception {
-    //ImageSampler.downSampleImage(new Dimension(30,30),
-    FractionRgbData imgRgb = new FractionRgbData(image);
-    double input[];
-    
-    
-    input = FractionRgbData.convertRgbInputToBinaryBlackAndWhite(imgRgb.getFlattenedRgbValues());
-    
-    //            System.out.println("Tamanio imput"+input.length);
-    //input = imgRgb.getFlattenedRgbValues();
-    // System.out.println("Tamanio imput"+input.length);
-    //            System.out.println( Arrays.toString(input));
-    //Arrays.toString(input);
-    
-    return input;
-    }
-    
-    @Override
-    public void update(Observable o, Object arg) {
-    SupervisedLearning rule = (SupervisedLearning)o; 
-    if(rule!=null)
-    System.out.println( nroFuente+"-Training, Network Epoch " + rule.getCurrentIteration() + ", Error:" + rule.getTotalNetworkError());
-    }
-     **/
 }
