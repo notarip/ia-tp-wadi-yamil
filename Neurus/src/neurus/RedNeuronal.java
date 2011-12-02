@@ -1,6 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * RedNeuronal.java
+ * Trabajo practico OCR de inteligencia artificial (75.23)
+ * Grupo: Wadi Jalil Maluf 84780 - Yamil Jalil Maluf 79040
+ * 2do cuatrimestre 2011
  */
 package neurus;
 
@@ -26,10 +28,6 @@ import org.neuroph.nnet.MultiLayerPerceptron;
 import org.neuroph.nnet.learning.LMS;
 import org.neuroph.nnet.learning.MomentumBackpropagation;
 
-/**
- *
- * @author Atlhon
- */
 public class RedNeuronal implements Observer, Serializable {
 
     private transient NeuralNetwork neuralNet;
@@ -45,7 +43,6 @@ public class RedNeuronal implements Observer, Serializable {
         this.tSalida = tSalida;
         neuralNet = new MultiLayerPerceptron(tEntrada, tCapa_intermedia, tSalida);
         maxIterations = 1000; //Valor por defecto
-        maxError = error;//Valor por defecto 0.1
         setMaximoError(maxError);
         if (neuralNet.getLearningRule() instanceof MomentumBackpropagation) {
             ((MomentumBackpropagation) neuralNet.getLearningRule()).setBatchMode(true);
@@ -72,7 +69,6 @@ public class RedNeuronal implements Observer, Serializable {
         NeuralNetwork net = NeuralNetwork.load(archivo + ".red");
         red.neuralNet = net;
         return red;
-
     }
 
     public void guardar(String archivo) {
@@ -91,36 +87,29 @@ public class RedNeuronal implements Observer, Serializable {
 
     /*
      * Se agrega una imagen que contiene los 12 digitos a reconocer. 
-     * Si no se pudo dividir correctamente la imagen se devuelve false
+     * Si no se pudo dividir correctamente la imagen en 12 partes se devuelve false
      */
     public boolean lanzarEntrenamientoImagen(File fuente) throws Exception {
 
         ExtractorCaracteres ec = new ExtractorCaracteres();
         TrainingSet trainingSet = new TrainingSet(this.tEntrada, this.tSalida);
         ArrayList<BufferedImage> imgs = ec.recortar(fuente, null, anchoImagen, altoImagen);
-//        System.out.println("Pedazos encontrados "+imgs.size());
         if (imgs.size() != 12) {
             System.out.println("La imagen pasada para entrenamiento " + fuente.getName() + " no se pudo interpretar correctamente");
             return false;
         }
+        //A cada caracter extraido se le asigna su valor para generar el conjunto
+        //de entrenamiento
         for (int i = 0; i < imgs.size(); i++) {
             BufferedImage bufferedImage = imgs.get(i);
             double[] rgbValues = transformarRGBtoInputRed(bufferedImage);
             double[] resultado = new double[12];
-
             Arrays.fill(resultado, 0);
             resultado[i] = 1;
-
             trainingSet.addElement(new SupervisedTrainingElement(rgbValues, resultado));
         }
-//        this.neuralNet.learnInSameThread(trainingSet);
-        this.neuralNet.learnInNewThread(trainingSet);
-      
-//        System.out.println("Entrenado: " + url);
-//        nroFuente++;
-      
+        this.neuralNet.learnInSameThread(trainingSet);
         return true;
-
     }
 
     public boolean isEntrenamientoStopped() {
@@ -138,11 +127,6 @@ public class RedNeuronal implements Observer, Serializable {
         for (BufferedImage image : listaCaracteres) {
             testSet.addElement(new TrainingElement(transformarRGBtoInputRed(image)));
         }
-
-//        do {            
-//            Thread.sleep(5*1000);
-//        } while (!neuralNet.getLearningRule().isStopped());
-//        
         //Para cada elemento agregado al conjunto se efectua el reconocimiento
         for (TrainingElement testElement : testSet.trainingElements()) {
             neuralNet.setInput(testElement.getInput());
@@ -150,6 +134,7 @@ public class RedNeuronal implements Observer, Serializable {
             double[] networkOutput = neuralNet.getOutput();
             String ch;
             int salida = interpretarSalida(networkOutput);
+            //Se mapea la salida con el valor que le corresponde
             if (salida == 10) {
                 ch = ".";
             } else {
@@ -160,15 +145,14 @@ public class RedNeuronal implements Observer, Serializable {
                 }
             }
             resultado.append(ch);
-//            System.out.println(" Output: " + Arrays.toString(networkOutput));
-//            System.out.println("Ganador:" + getWinner(networkOutput) + "!!!");
-
         }
         return resultado.toString();
     }
 
     /**
      * Encuentra en la salida de la red el resultado mas probale
+     * del reconocimiento. Para ello se encuetra el maximo 
+     * valor de la salida
      * @param salida es el resultado arrojado por la red neuronal
      * @return 
      */
@@ -188,35 +172,25 @@ public class RedNeuronal implements Observer, Serializable {
      * Devuelve un array de double equivalente al contenido de una imagen
      */
     private double[] transformarRGBtoInputRed(BufferedImage image) throws Exception {
-        //ImageSampler.downSampleImage(new Dimension(30,30),
         FractionRgbData imgRgb = new FractionRgbData(image);
         double input[];
-
         input = FractionRgbData.convertRgbInputToBinaryBlackAndWhite(imgRgb.getFlattenedRgbValues());
-
-//            System.out.println("Tamanio imput"+input.length);
-        //input = imgRgb.getFlattenedRgbValues();
-        // System.out.println("Tamanio imput"+input.length);
-//            System.out.println( Arrays.toString(input));
-        //Arrays.toString(input);
-
         return input;
     }
 
     public final void setMaximoError(double er) {
-        ((LMS) neuralNet.getLearningRule()).setMaxError(er);//0-1
-
+        ((LMS) neuralNet.getLearningRule()).setMaxError(er);
+        this.maxError = er;
     }
 
     public void addObserver(Observer ob) {
         neuralNet.getLearningRule().addObserver(ob);
-
     }
 
     @Override
     public void update(Observable o, Object arg) {
         SupervisedLearning rule = (SupervisedLearning) o;
-        if (rule != null) //          System.out.println( nroFuente+"-Training, Network Epoch " + rule.getCurrentIteration() + ", Error:" + rule.getTotalNetworkError());
+        if (rule != null)
         {
             System.out.println("Training, Network Epoch " + rule.getCurrentIteration() + ", Error:" + rule.getTotalNetworkError());
         }
