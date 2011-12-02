@@ -16,12 +16,16 @@ import java.util.ArrayList;
  */
 public class Neurus {
 
-    public static int TAMANIO_ENTRADA = 2500;
-    public static int TAMANIO_CAPA_INT = 200;//108;
+    
+    public static int TAMANIO_CAPA_INT = 108;
     public static int TAMANIO_SALIDA = 12;
-    public static int ANCHO_IMAGEN = 50; //Se supone cuadrada
+    public static double ERROR =0.01 ;
+    public static int ANCHO_IMAGEN = 30; //Se supone cuadrada
 //    public static int nroFuente=1;
+    private static int ALTO_IMAGEN=60;
 
+    public static int TAMANIO_ENTRADA = ANCHO_IMAGEN * ALTO_IMAGEN;
+    
     public Neurus() throws Exception {
     }
 
@@ -95,7 +99,7 @@ public class Neurus {
                 System.out.println("No se pudo cargar la red. No habìa datos guardados.");
             }
         } else {
-            red = new RedNeuronal(TAMANIO_ENTRADA, TAMANIO_CAPA_INT, TAMANIO_SALIDA, ANCHO_IMAGEN);
+            red = new RedNeuronal(TAMANIO_ENTRADA,ERROR, TAMANIO_CAPA_INT, TAMANIO_SALIDA, ANCHO_IMAGEN,ALTO_IMAGEN);
         }
 
 
