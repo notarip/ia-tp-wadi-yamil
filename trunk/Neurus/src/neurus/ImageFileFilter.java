@@ -1,19 +1,19 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * ImageFileFilter.java
+ * Trabajo practico OCR de inteligencia artificial (75.23)
+ * Grupo: Wadi Jalil Maluf 84780 - Yamil Jalil Maluf 79040
+ * 2do cuatrimestre 2011
  */
 package neurus;
 
 import java.io.*;
 
 /**
- *
- * @author Atlhon
+ *Crea un filtro para listar el contenido de un directorio
  */
 public class ImageFileFilter implements FileFilter {
 
     private final String[] okFileExtensions;
-//            new String[]{"jpg", "png"};
     
     public ImageFileFilter(String[] ext){
         okFileExtensions=ext;
