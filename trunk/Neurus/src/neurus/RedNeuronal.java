@@ -45,7 +45,7 @@ public class RedNeuronal implements Observer, Serializable {
         this.tSalida = tSalida;
         neuralNet = new MultiLayerPerceptron(tEntrada, tCapa_intermedia, tSalida);
         maxIterations = 1000; //Valor por defecto
-        maxError = 0.1;//Valor por defecto
+        maxError = 0.05;//Valor por defecto 0.1
         setMaximoError(maxError);
         if (neuralNet.getLearningRule() instanceof MomentumBackpropagation) {
             ((MomentumBackpropagation) neuralNet.getLearningRule()).setBatchMode(true);
@@ -118,7 +118,7 @@ public class RedNeuronal implements Observer, Serializable {
       
 //        System.out.println("Entrenado: " + url);
 //        nroFuente++;
-        System.out.println("Finalizo el entrenamiento con el archivo " + fuente.getName());
+      
         return true;
 
     }
