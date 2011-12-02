@@ -1,0 +1,7 @@
+   
+    public static int TAMANIO_CAPA_INT = 60;
+    public static int TAMANIO_SALIDA = 12;
+    public static double ERROR =0.001 ;
+    public static int ANCHO_IMAGEN = 30; //Se supone cuadrada
+//    public static int nroFuente=1;
+    private static int ALTO_IMAGEN=60;
