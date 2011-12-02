@@ -40,18 +40,18 @@ public class RedNeuronal implements Observer, Serializable {
     private int anchoImagen;
     private int altoImagen;
 
-    public RedNeuronal(int tEntrada, int tCapa_intermedia, int tSalida, int tamnioImagen) {
+    public RedNeuronal(int tEntrada, double error, int tCapa_intermedia, int tSalida, int ancho, int alto) {
         this.tEntrada = tEntrada;
         this.tSalida = tSalida;
         neuralNet = new MultiLayerPerceptron(tEntrada, tCapa_intermedia, tSalida);
         maxIterations = 1000; //Valor por defecto
-        maxError = 0.05;//Valor por defecto 0.1
+        maxError = error;//Valor por defecto 0.1
         setMaximoError(maxError);
         if (neuralNet.getLearningRule() instanceof MomentumBackpropagation) {
             ((MomentumBackpropagation) neuralNet.getLearningRule()).setBatchMode(true);
         }
-        anchoImagen = tamnioImagen;
-        altoImagen = tamnioImagen;
+        anchoImagen = ancho;
+        altoImagen = alto;
         addObserver(this);
     }
 
